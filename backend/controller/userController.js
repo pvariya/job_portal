@@ -1,5 +1,5 @@
 const User = require("../models/userSchema");
-const { hashPassword, token } = require("../utils/userUtils");
+const { hashPassword, token, comparePassword } = require("../utils/userUtils");
 
 module.exports.signUp = async (req, res) => {
   try {
@@ -16,7 +16,6 @@ module.exports.signUp = async (req, res) => {
       name: name,
       email: email,
       password: hash,
-      
       role: role,
     });
 
@@ -24,6 +23,7 @@ module.exports.signUp = async (req, res) => {
       id: newUser._id,
       email: newUser.email,
       username: newUser.username,
+      role: newUser.role,
     });
 
     res.status(201).json({ message: "User created", tokendata, user: newUser });
@@ -31,4 +31,23 @@ module.exports.signUp = async (req, res) => {
     console.error("Signup error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
+};
+
+module.exports.login = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email: email });
+  if (!user) {
+    return res.status(404).send({ message: "User not found" });
+  }
+  const isMatch = await comparePassword(user.password, password);
+  if (!isMatch) {
+    return res.status(401).send({ message: "Invalid credentials" });
+  }
+  const tokendata = await token({
+    id: user._id,
+    email: user.email,
+    username: user.username,
+    role: user.role,
+  });
+  res.send({ message: "Logged in successfully", tokendata, user });
 };
