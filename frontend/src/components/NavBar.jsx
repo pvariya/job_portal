@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <nav className="bg-blue-600 p-4">
+    <nav className="bg-blue-600 p-4 overflow-hidden">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
         <a href="#" className="text-white text-2xl font-bold">

@@ -8,11 +8,14 @@ import { BrowserRouter, Route, Router } from "react-router-dom";
 function App() {
   return (
     <>
-     
-      <BrowserRouter>
-      <NavBar />
-        <Allroutes />
-      </BrowserRouter>
+
+
+      <div className="overflow-hidden"> {/* Add this to prevent scrolling */}
+        <BrowserRouter>
+          <NavBar />
+          <Allroutes />
+        </BrowserRouter>
+      </div>
     </>
   );
 }
