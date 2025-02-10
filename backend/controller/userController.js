@@ -7,7 +7,7 @@ module.exports.signUp = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (user) {
-      return res.status(400).json({ message: "Email already exists" });
+      return res.status(400).send({ message: "Email already exists", success: false });
     }
 
     const hash = await hashPassword(password);
@@ -52,3 +52,19 @@ module.exports.login = async (req, res) => {
   });
   res.send({ message: "Logged in successfully", tokendata, user });
 };
+
+
+module.exports.getUserEmail = async (req, res) => {
+  try {
+    const email = req.params.email;
+    const foundUser = await User.findOne({ email });
+    if (!foundUser) {
+      return res.status(404).send({ message: "User not found" });
+    }
+    res.send(foundUser);
+
+  } catch (error) {
+    console.error("Error getting user:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}

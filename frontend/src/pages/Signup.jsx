@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { API } from "../config/Api";
+import { useNavigate } from "react-router-dom";
+
 
 const validation = z.object({
   name: z.string().min(3, "minimum 3 characters required").max(255),
@@ -17,7 +18,9 @@ const validation = z.object({
     .regex(/[0-9]/, "at least one number required"),
 });
 
+
 const Signup = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -29,20 +32,31 @@ const Signup = () => {
 
   const create = async ({ name, email, password }) => {
     try {
-      let res = await API.post(`/user/signup`, {
-        name: name,
-        email: email,
-        role: "user",
-        password: password,
-      });
+      if(res.success) {
+        let res = await API.post(`/user/signup`, {
+          name: name,
+          email: email,
+          role: "user",
+          password: password,
+        });
+      }
+      else {
+        alert("Email already exists");
+      }
       console.log(res);
     } catch (error) {
-      console.error(error);
+      if (error.response) {
+
+        console.error("Error response:", error.response.data);
+      } else {
+        console.error("Error:", error.message);
+      }
     }
   };
 
+
   const onSubmit = (data) => {
-    console.log(data);
+    console.log("Submitted Data:", data);
     create(data);
   };
 
@@ -51,7 +65,7 @@ const Signup = () => {
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
         <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Name Field */}
+
           <div>
             <label className="block text-gray-700">Name</label>
             <input
@@ -64,7 +78,7 @@ const Signup = () => {
             {errors.name && <p>{errors.name.message}</p>}
           </div>
 
-          {/* Email Field */}
+
           <div>
             <label className="block text-gray-700">Email</label>
             <input
@@ -77,8 +91,8 @@ const Signup = () => {
             {errors.email && <p>{errors.email.message}</p>}
           </div>
 
-          {/* Role Field */}
-          <div>
+
+          {/* <div>
             <label className="block text-gray-700">Role</label>
             <select
               name="role"
@@ -88,9 +102,9 @@ const Signup = () => {
               <option value="user">User</option>
               <option value="admin">Admin</option>
             </select>
-          </div>
+          </div> */}
 
-          {/* Password Field */}
+
           <div>
             <label className="block text-gray-700">Password</label>
             <input
