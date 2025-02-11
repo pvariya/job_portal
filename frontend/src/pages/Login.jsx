@@ -2,9 +2,10 @@ import React from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { API } from "../config/Api";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import { toast, ToastContainer } from "react-toastify";
 
 const validation = z.object({
   email: z.string().email(),
@@ -18,6 +19,7 @@ const validation = z.object({
 });
 const Login = () => {
   const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -29,28 +31,48 @@ const Login = () => {
 
   const create = async ({ email, password }) => {
     try {
-      let res = await API.post(`user/login`, {
-        email: email,
-        password: password,
+      let res = await API.post(`user/login`, { email, password });
+      let { user, tokendata } = res.data;
+
+      Cookies.set("token", tokendata, { expires: 2 });
+      toast.success("Login successful! 🎉", {
+        position: "top-right",
+        autoClose: 3000,
       });
-      console.log(res);
-      navigate("/");  
+
+      setTimeout(() => navigate("/"), 3000);
     } catch (error) {
       console.error(error);
+
+      let errorMessage = "Login failed! Please try again.";
+
+      if (error.response) {
+        if (error.response.status === 404) {
+          errorMessage = "User not found! Please register first.";
+        } else if (error.response.status === 401) {
+          errorMessage =
+            "Invalid credentials! Please check your email and password.";
+        } else {
+          errorMessage = error.response.data?.message || errorMessage;
+        }
+      }
+
+      toast.error(errorMessage, { position: "top-right", autoClose: 3000 });
+      Cookies.remove("token");
+      setTimeout(() => navigate("/signup"), 3000);
     }
   };
 
   const onSubmit = (data) => {
-    console.log(data);
     create(data);
   };
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100 border overflow-hidden">
+      <ToastContainer />
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
         <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Email Field */}
           <div>
             <label className="block text-gray-700">Email</label>
             <input
@@ -63,7 +85,6 @@ const Login = () => {
             {errors.email && <p>{errors.email.message}</p>}
           </div>
 
-          {/* Password Field */}
           <div>
             <label className="block text-gray-700">Password</label>
             <input
@@ -76,7 +97,6 @@ const Login = () => {
             {errors.password && <p>{errors.password.message}</p>}
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"

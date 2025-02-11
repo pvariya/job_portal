@@ -4,10 +4,9 @@ const { hashPassword, token, comparePassword } = require("../utils/userUtils");
 module.exports.signUp = async (req, res) => {
   try {
     const { email, password, name, role } = req.body;
-
     const user = await User.findOne({ email });
     if (user) {
-      return res.status(400).send({ message: "Email already exists", success: false });
+      return res.status(400).send({ message: "Email already exists",success: false });
     }
 
     const hash = await hashPassword(password);
@@ -26,7 +25,7 @@ module.exports.signUp = async (req, res) => {
       role: newUser.role,
     });
 
-    res.status(201).json({ message: "User created", tokendata, user: newUser });
+    res.status(201).json({ message: "User created", tokendata, user: newUser ,success: true});
   } catch (error) {
     console.error("Signup error:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -37,7 +36,7 @@ module.exports.login = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email: email });
   if (!user) {
-    return res.status(404).send({ message: "User not found" });
+    return res.status(404).send({ message: "User not found",success: false });
   }
   const isMatch = await comparePassword(user.password, password);
   if (!isMatch) {
@@ -47,10 +46,9 @@ module.exports.login = async (req, res) => {
     id: user._id,
     email: user.email,
     username: user.username,
-
     role: user.role,
   });
-  res.send({ message: "Logged in successfully", tokendata, user });
+  res.send({ message: "Logged in successfully", tokendata, user,success: true });
 };
 
 
