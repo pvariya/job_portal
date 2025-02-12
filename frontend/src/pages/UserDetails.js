@@ -1,7 +1,7 @@
 import { jwtDecode } from "jwt-decode";
-import Cookies from "js-cookie"; // ✅ Correct import
+import Cookies from "js-cookie";
 
-let token = Cookies.get("token"); // ✅ Now it will work
+let token = Cookies.get("token");
 console.log(token);
 
 let decode = token ? jwtDecode(token) : null;

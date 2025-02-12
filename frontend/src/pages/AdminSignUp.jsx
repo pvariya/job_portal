@@ -3,7 +3,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { API } from "../config/Api";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -20,7 +20,7 @@ const validation = z.object({
     .regex(/[0-9]/, "at least one number required"),
 });
 
-const Signup = () => {
+const AdminSignUp = () => {
   const navigate = useNavigate();
   const {
     register,
@@ -37,7 +37,7 @@ const Signup = () => {
       let res = await API.post("/user/signup", {
         name: data.name,
         email: data.email,
-        role: "user",
+        role: "admin",
         password: data.password,
       });
       const { user, tokendata } = res.data;
@@ -72,15 +72,13 @@ const Signup = () => {
   };
 
   const onSubmit = (data) => {
-    // console.log("Submitted Data:", data);
     create(data);
   };
-
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100 border overflow-hidden">
       <ToastContainer />
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
+        <h2 className="text-2xl font-bold text-center mb-6">Admin Register</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="block text-gray-700">Name</label>
@@ -122,14 +120,12 @@ const Signup = () => {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
           >
-            Register
+            Register Admin
           </button>
         </form>
-
-        <Link to="/Admin-signup">Create Admin</Link>
       </div>
     </div>
   );
 };
 
-export default Signup;
+export default AdminSignUp;
