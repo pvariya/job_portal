@@ -7,17 +7,11 @@ import Ability from "../role/Ability";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const token = getUserDetails();
-    setIsAuthenticated(!!token);
-  }, []);
-
+  let user = getUserDetails();
+  console.log(user);
   const handleLogout = () => {
     Cookies.remove("token");
-    setIsAuthenticated(false);
     toast.success("Logged Out Successfully  👋", {
       position: "top-right",
       autoClose: 3000,
@@ -26,6 +20,7 @@ const NavBar = () => {
       navigate("/login");
     }, 3000);
   };
+
   return (
     <nav className="bg-blue-600 p-4 overflow-hidden">
       <ToastContainer />
@@ -43,12 +38,16 @@ const NavBar = () => {
               Assing
             </Link>
           ) : null}
+          
+          {user ? (
+            <p className="text-white hover:text-gray-300">{user.name}</p>
+          ) : (
+            <Link to="/signup" className="text-white hover:text-gray-300">
+              SignUp
+            </Link>
+          )}
 
-          <Link to="/signup" className="text-white hover:text-gray-300">
-            SignUp
-          </Link>
-
-          {isAuthenticated ? (
+          {user ? (
             <p
               onClick={handleLogout}
               className="cursor-pointer text-white hover:text-gray-300"
@@ -81,10 +80,15 @@ const NavBar = () => {
             </Link>
           ) : null}
 
-          <Link to="/signup" className="block hover:text-gray-300">
-            SignUp
-          </Link>
-          {isAuthenticated ? (
+          {user ? (
+            <p className="block hover:text-gray-300">{user.name}</p>
+          ) : (
+            <Link to="/signup" className="block hover:text-gray-300">
+              SignUp
+            </Link>
+          )}
+
+          {user ? (
             <p
               onClick={handleLogout}
               className="cursor-pointer not-even:block hover:text-gray-300"

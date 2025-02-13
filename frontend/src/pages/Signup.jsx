@@ -50,8 +50,6 @@ const Signup = () => {
         });
         setTimeout(() => navigate("/"), 3000);
       } else {
-        // toast.error(errorMessage, { position: "top-right", autoClose: 3000 });
-        // setTimeout(() => navigate("/login"), 3000);
         alert("email not found");
         navigate("/login");
       }

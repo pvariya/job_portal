@@ -1,9 +1,8 @@
-const express   = require('express');
-const userRoute = require('./userRoute');
+const express = require("express");
+const userRoute = require("./userRoute");
+const taskRoute = require("./taskRoute");
 
-const indexRoute       = express.Router();
-
-// Import the controller functions
-indexRoute.use("/user",userRoute)
-
+const indexRoute = express.Router();
+indexRoute.use("/user", userRoute);
+indexRoute.use('/task',taskRoute)
 module.exports = indexRoute;
